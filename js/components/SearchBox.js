@@ -1,5 +1,11 @@
 import React, {Component, PropTypes} from 'react';
 
+  var styles={
+        width: '70%',
+        height: '2  0px',
+        alignItems: 'center',
+       };
+
 export default class SearchBox extends Component {
 
    constructor(props) {    /* Note props is passed into the constructor in order to be used */
@@ -34,11 +40,16 @@ export default class SearchBox extends Component {
         this.props.searching(this.state.name,"true");
     }
 
+
    
     render() {
+
+
+
         return (
-            <div id="SearchBox">
-                 <input type="text"  placeholder='Enter first name of patient you wish to Search.'  onChange={this.changeName} />
+            <div style={styles} >
+            
+                 <input style={styles} id="SearchBox" type="text"  placeholder='Enter the name'  onChange={this.changeName} />
                 
             </div>
         );

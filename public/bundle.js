@@ -114,14 +114,18 @@
 	
 	var page;
 	
+	var styles = {
+		width: '100px',
+		height: '10px'
+	};
+	
 	var App = function (_React$Component) {
 		_inherits(App, _React$Component);
 	
 		function App(props) {
 			_classCallCheck(this, App);
 	
-			var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props)); /* Note props is passed into the constructor in order to be used */
-	
+			var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
 			_this.state = {
 				active: true,
@@ -205,7 +209,8 @@
 						'div',
 						null,
 						_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-						_react2.default.createElement('input', { type: 'text', placeholder: 'Enter the no of entries.', onChange: this.changeEntries }),
+						'Enter the no of entries you wish to see :',
+						_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
 						_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList })
 					);
 				} else {
@@ -216,7 +221,7 @@
 							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
 							_react2.default.createElement(
 								'div',
-								{ id: 'loading-image', 'background-image': '../images/lazy_loader.gif' },
+								{ id: 'loading-image' },
 								'loading....'
 							),
 							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
@@ -19972,7 +19977,7 @@
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -19994,6 +19999,12 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var styles = {
+	    width: '70%',
+	    height: '2  0px',
+	    alignItems: 'center'
+	};
+	
 	var SearchBox = function (_Component) {
 	    _inherits(SearchBox, _Component);
 	
@@ -20014,7 +20025,7 @@
 	    }
 	
 	    _createClass(SearchBox, [{
-	        key: "changeName",
+	        key: 'changeName',
 	        value: function changeName(event) {
 	            var self = this;
 	
@@ -20025,23 +20036,24 @@
 	            self.setState(_defineProperty({
 	                name: event.target.value,
 	                typing: false
-	            }, "typing", setTimeout(function () {
+	            }, 'typing', setTimeout(function () {
 	                self.sendtoParent(self.state.name);
 	            }, 1000)));
 	            console.log(this.state.name);
 	        }
 	    }, {
-	        key: "sendtoParent",
+	        key: 'sendtoParent',
 	        value: function sendtoParent() {
 	            this.props.searching(this.state.name, "true");
 	        }
 	    }, {
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
+	
 	            return _react2.default.createElement(
-	                "div",
-	                { id: "SearchBox" },
-	                _react2.default.createElement("input", { type: "text", placeholder: "Enter first name of patient you wish to Search.", onChange: this.changeName })
+	                'div',
+	                { style: styles },
+	                _react2.default.createElement('input', { style: styles, id: 'SearchBox', type: 'text', placeholder: 'Enter the name', onChange: this.changeName })
 	            );
 	        }
 	    }]);

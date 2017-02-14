@@ -6,11 +6,16 @@ import Pagination from './components/Pagination'
 
 var page;
 
+var styles={
+	width: '100px',
+	height: '10px',
+};
+
 
 
 class App extends React.Component {
 
-	constructor(props) {    /* Note props is passed into the constructor in order to be used */
+	constructor(props) {    
         super(props);
         this.state = {
         	active: true,
@@ -95,7 +100,8 @@ class App extends React.Component {
     return (
       <div>
       <SearchBox searching={this.findName}/>
-      <input type="text"  placeholder='Enter the no of entries.'  onChange={this.changeEntries} />
+      Enter the no of entries you wish to see :
+      <input type="text"  style = {styles} onChange={this.changeEntries} />
       <SearchResult List={this.state.pageList}/>
 
      
@@ -111,6 +117,7 @@ class App extends React.Component {
 	      <SearchBox searching={this.findName}/>
 	      <div id="loading-image">loading....</div>
 	      <SearchResult List={this.state.pageList}/>
+	      
 	      <input type="button" onClick={this.nextPage} value="Next"/>
 
 	      </div>
