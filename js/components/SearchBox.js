@@ -1,14 +1,15 @@
 import React, {Component, PropTypes} from 'react';
+import memoize from 'lru-memoize';
 
   var styles={
         width: '70%',
-        height: '2  0px',
+        height: '20px',
         alignItems: 'center',
        };
 
 export default class SearchBox extends Component {
 
-   constructor(props) {    /* Note props is passed into the constructor in order to be used */
+   constructor(props) {    
         super(props);
         this.state = {
             name: "", 
@@ -33,7 +34,6 @@ export default class SearchBox extends Component {
             typing: setTimeout(function(){ 
                 self.sendtoParent(self.state.name)},1000)
         }); 
-        console.log(this.state.name); 
     }
 
     sendtoParent(){

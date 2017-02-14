@@ -35,7 +35,7 @@ class App extends React.Component {
 	
 	
 	findName(name){
-		console.log(name + " in App.")
+		
 		this.setState({active: false})
 		$('#loading-image').show();
 		 $.ajax({
@@ -71,12 +71,11 @@ class App extends React.Component {
 
 		for(var i=(page-1)*this.state.entries,j=0;i<Math.min(page*this.state.entries,this.state.total);i++,j++)
 		{
-			console.log(i+ " "+ j);
+			
 			this.state.pageList[j]=this.state.userList[i];
 		}
 
 		this.setState({rerender:true})
-		console.log(this.state.pageList);
 	}
 
 	prevPage(){
