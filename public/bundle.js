@@ -199,6 +199,12 @@
 		}, {
 			key: 'changeEntries',
 			value: function changeEntries(e) {
+	
+				page = 1;
+				this.state.pageList = [];
+				for (var i = (page - 1) * e.target.value, j = 0; i < Math.min(page * e.target.value, this.state.total); i++, j++) {
+					this.state.pageList[j] = this.state.userList[i];
+				}
 				this.setState({ entries: e.target.value });
 			}
 		}, {
@@ -219,6 +225,8 @@
 							'div',
 							null,
 							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+							'Enter the no of entries you wish to see :',
+							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
 							_react2.default.createElement(
 								'div',
 								{ id: 'loading-image' },
@@ -232,6 +240,8 @@
 							'div',
 							null,
 							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+							'Enter the no of entries you wish to see :',
+							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
 							_react2.default.createElement(
 								'div',
 								{ id: 'loading-image' },
@@ -244,6 +254,8 @@
 							'div',
 							null,
 							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+							'Enter the no of entries you wish to see :',
+							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
 							_react2.default.createElement(
 								'div',
 								{ id: 'loading-image' },
@@ -258,6 +270,8 @@
 							'div',
 							null,
 							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+							'Enter the no of entries you wish to see :',
+							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
 							_react2.default.createElement(
 								'div',
 								{ id: 'loading-image' },

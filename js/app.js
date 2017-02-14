@@ -91,7 +91,16 @@ class App extends React.Component {
 		this.setState({rerender:true})
 	}
 	changeEntries(e){
-		this.setState({entries : e.target.value})
+		
+		 page = 1;
+	         this.state.pageList=[];
+	         for(var i=(page-1)*e.target.value,j=0;i<Math.min(page*e.target.value,this.state.total);i++,j++)
+			{
+				this.state.pageList[j]=this.state.userList[i];
+				
+			}
+		this.setState({entries : e.target.value});
+
 	}
 
   render(){
@@ -115,9 +124,13 @@ class App extends React.Component {
 		 return (
 	      <div>
 	      <SearchBox searching={this.findName}/>
+	        Enter the no of entries you wish to see :
+      <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image">loading....</div>
+
 	      <SearchResult List={this.state.pageList}/>
-	      
+
+
 	      <input type="button" onClick={this.nextPage} value="Next"/>
 
 	      </div>
@@ -128,6 +141,8 @@ class App extends React.Component {
 		return (
 	      <div>
 	      <SearchBox searching={this.findName}/>
+	        Enter the no of entries you wish to see :
+      <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image" >loading....</div>
 	      <SearchResult List={this.state.pageList}/>
 	    
@@ -139,6 +154,8 @@ class App extends React.Component {
 		 return (
 	      <div>
 	      <SearchBox searching={this.findName}/>
+	        Enter the no of entries you wish to see :
+      <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image" >loading....</div>
 	      <SearchResult List={this.state.pageList}/>
 	       <input type="button" onClick={this.prevPage} value="Pre"/>
@@ -152,6 +169,8 @@ class App extends React.Component {
 		return (
 	      <div>
 	      <SearchBox searching={this.findName}/>
+	        Enter the no of entries you wish to see :
+      <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image" >loading....</div>
 	      <SearchResult List={this.state.pageList}/>
 
