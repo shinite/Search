@@ -24,6 +24,7 @@ class App extends React.Component {
             entries: 5,
             pageList:[],
             rerender:"",
+            error:false	,
         };
 
         this.findName=this.findName.bind(this);
@@ -48,17 +49,21 @@ class App extends React.Component {
 	      success: function(data) {
 	       
 	         $('#loading-image').hide();
-	         this.setState({userList:data.items,total:data.total_count});
+	         this.setState({userList:data.items,total:data.total_count, error:false});
 	         page=1;
 	         this.state.pageList=[];
 	         for(var i=(page-1)*this.state.entries,j=0;i<Math.min(page*this.state.entries,data.total_count);i++,j++)
-			{
-				this.state.pageList[j]=this.state.userList[i];
-				
-			}
+				{
+					this.state.pageList[j]=this.state.userList[i];
+					
+				}
 
 	      }.bind(this),
 	      error: function(xhr, status, err) {
+	      	if(status='error')
+	      	{
+	      		this.setState({error: true})
+	      	}
 	        console.error(this.state.url, status, err.toString());
 	         $('#loading-image').hide();
 	      }.bind(this)
@@ -103,6 +108,23 @@ class App extends React.Component {
 	}
 
   render(){
+  	if(this.state.error==true)
+  	{
+
+	return (
+	      <div>
+	      <SearchBox searching={this.findName}/>
+	      Enter the no of entries you wish to see :
+	      <input type="text"  style = {styles} onChange={this.changeEntries} />
+	     	<div id='error'>
+	     	Please enter some valid value
+	     	</div>
+	      </div>
+	    );
+	    
+  	}
+  	else
+  	{
   	if(this.state.active===true)
   	{
     return (
@@ -179,6 +201,7 @@ class App extends React.Component {
 	      );
 		}
 	}
+}
 	}
 }
 ReactDOM.render(<App />, document.getElementById('content'));

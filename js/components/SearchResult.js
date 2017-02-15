@@ -14,7 +14,7 @@ export default class SearchResult extends Component {
     var ListUsers = this.props.List.map(function(arr) {
      return (
        <div>
-       <ChildSearchResult allData={arr} login={arr.login} />
+       <ChildSearchResult allData={arr} login={arr.login} key={arr.id} />
        </div>
      );
    }.bind(this)

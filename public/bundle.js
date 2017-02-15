@@ -96,11 +96,11 @@
 	
 	var _SearchBox2 = _interopRequireDefault(_SearchBox);
 	
-	var _SearchResult = __webpack_require__(165);
+	var _SearchResult = __webpack_require__(170);
 	
 	var _SearchResult2 = _interopRequireDefault(_SearchResult);
 	
-	var _Pagination = __webpack_require__(167);
+	var _Pagination = __webpack_require__(172);
 	
 	var _Pagination2 = _interopRequireDefault(_Pagination);
 	
@@ -133,7 +133,8 @@
 				total: "",
 				entries: 5,
 				pageList: [],
-				rerender: ""
+				rerender: "",
+				error: false
 			};
 	
 			_this.findName = _this.findName.bind(_this);
@@ -146,7 +147,7 @@
 		_createClass(App, [{
 			key: 'findName',
 			value: function findName(name) {
-				console.log(name + " in App.");
+	
 				this.setState({ active: false });
 				$('#loading-image').show();
 				$.ajax({
@@ -159,7 +160,7 @@
 					success: function (data) {
 	
 						$('#loading-image').hide();
-						this.setState({ userList: data.items, total: data.total_count });
+						this.setState({ userList: data.items, total: data.total_count, error: false });
 						page = 1;
 						this.state.pageList = [];
 						for (var i = (page - 1) * this.state.entries, j = 0; i < Math.min(page * this.state.entries, data.total_count); i++, j++) {
@@ -167,6 +168,9 @@
 						}
 					}.bind(this),
 					error: function (xhr, status, err) {
+						if (status = 'error') {
+							this.setState({ error: true });
+						}
 						console.error(this.state.url, status, err.toString());
 						$('#loading-image').hide();
 					}.bind(this)
@@ -178,12 +182,11 @@
 				page++;
 	
 				for (var i = (page - 1) * this.state.entries, j = 0; i < Math.min(page * this.state.entries, this.state.total); i++, j++) {
-					console.log(i + " " + j);
+	
 					this.state.pageList[j] = this.state.userList[i];
 				}
 	
 				this.setState({ rerender: true });
-				console.log(this.state.pageList);
 			}
 		}, {
 			key: 'prevPage',
@@ -210,76 +213,92 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				if (this.state.active === true) {
+				if (this.state.error == true) {
+	
 					return _react2.default.createElement(
 						'div',
 						null,
 						_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
 						'Enter the no of entries you wish to see :',
 						_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-						_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList })
+						_react2.default.createElement(
+							'div',
+							{ id: 'error' },
+							'Please enter some valid value'
+						)
 					);
 				} else {
-					if (page == 1 && this.state.total > page * this.state.entries) {
+					if (this.state.active === true) {
 						return _react2.default.createElement(
 							'div',
 							null,
 							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
 							'Enter the no of entries you wish to see :',
 							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-							_react2.default.createElement(
-								'div',
-								{ id: 'loading-image' },
-								'loading....'
-							),
-							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
-						);
-					} else if (page == 1 && this.state.total <= page * this.state.entries) {
-						return _react2.default.createElement(
-							'div',
-							null,
-							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-							'Enter the no of entries you wish to see :',
-							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-							_react2.default.createElement(
-								'div',
-								{ id: 'loading-image' },
-								'loading....'
-							),
 							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList })
 						);
-					} else if (this.state.total > page * this.state.entries) {
-						return _react2.default.createElement(
-							'div',
-							null,
-							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-							'Enter the no of entries you wish to see :',
-							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-							_react2.default.createElement(
-								'div',
-								{ id: 'loading-image' },
-								'loading....'
-							),
-							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
-						);
 					} else {
-						return _react2.default.createElement(
-							'div',
-							null,
-							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-							'Enter the no of entries you wish to see :',
-							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-							_react2.default.createElement(
+						if (page == 1 && this.state.total > page * this.state.entries) {
+							return _react2.default.createElement(
 								'div',
-								{ id: 'loading-image' },
-								'loading....'
-							),
-							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' })
-						);
+								null,
+								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+								'Enter the no of entries you wish to see :',
+								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+								_react2.default.createElement(
+									'div',
+									{ id: 'loading-image' },
+									'loading....'
+								),
+								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
+								_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
+							);
+						} else if (page == 1 && this.state.total <= page * this.state.entries) {
+							return _react2.default.createElement(
+								'div',
+								null,
+								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+								'Enter the no of entries you wish to see :',
+								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+								_react2.default.createElement(
+									'div',
+									{ id: 'loading-image' },
+									'loading....'
+								),
+								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList })
+							);
+						} else if (this.state.total > page * this.state.entries) {
+							return _react2.default.createElement(
+								'div',
+								null,
+								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+								'Enter the no of entries you wish to see :',
+								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+								_react2.default.createElement(
+									'div',
+									{ id: 'loading-image' },
+									'loading....'
+								),
+								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
+								_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' }),
+								_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
+							);
+						} else {
+							return _react2.default.createElement(
+								'div',
+								null,
+								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+								'Enter the no of entries you wish to see :',
+								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+								_react2.default.createElement(
+									'div',
+									{ id: 'loading-image' },
+									'loading....'
+								),
+								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
+								_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' })
+							);
+						}
 					}
 				}
 			}
@@ -20003,9 +20022,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _lruMemoize = __webpack_require__(165);
 	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	var _lruMemoize2 = _interopRequireDefault(_lruMemoize);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -20015,7 +20036,7 @@
 	
 	var styles = {
 	    width: '70%',
-	    height: '2  0px',
+	    height: '20 px',
 	    alignItems: 'center'
 	};
 	
@@ -20025,13 +20046,13 @@
 	    function SearchBox(props) {
 	        _classCallCheck(this, SearchBox);
 	
-	        var _this = _possibleConstructorReturn(this, (SearchBox.__proto__ || Object.getPrototypeOf(SearchBox)).call(this, props)); /* Note props is passed into the constructor in order to be used */
-	
+	        var _this = _possibleConstructorReturn(this, (SearchBox.__proto__ || Object.getPrototypeOf(SearchBox)).call(this, props));
 	
 	        _this.state = {
 	            name: "",
 	            typing: false,
-	            typingTimeOut: 0
+	            typingTimeOut: 0,
+	            cache: []
 	        };
 	        _this.changeName = _this.changeName.bind(_this);
 	        _this.sendtoParent = _this.sendtoParent.bind(_this);
@@ -20043,21 +20064,23 @@
 	        value: function changeName(event) {
 	            var self = this;
 	
-	            if (self.state.typingTimeOut) {
-	                clearTimeout(typingTimeOut);
+	            if (self.typingTimeOut) {
+	                clearTimeout(self.typingTimeOut);
 	            }
 	
-	            self.setState(_defineProperty({
+	            self.typingTimeOut = setTimeout(function () {
+	                self.sendtoParent(self.state.name);
+	            }, 1000);
+	
+	            self.setState({
 	                name: event.target.value,
 	                typing: false
-	            }, 'typing', setTimeout(function () {
-	                self.sendtoParent(self.state.name);
-	            }, 1000)));
-	            console.log(this.state.name);
+	            });
 	        }
 	    }, {
 	        key: 'sendtoParent',
 	        value: function sendtoParent() {
+	
 	            this.props.searching(this.state.name, "true");
 	        }
 	    }, {
@@ -20083,6 +20106,225 @@
 
 	'use strict';
 	
+	exports.__esModule = true;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _memoize = __webpack_require__(166);
+	
+	var _memoize2 = _interopRequireDefault(_memoize);
+	
+	exports['default'] = _memoize2['default'];
+	module.exports = exports['default'];
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports['default'] = memoize;
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _singletonCache = __webpack_require__(167);
+	
+	var _singletonCache2 = _interopRequireDefault(_singletonCache);
+	
+	var _lruCache = __webpack_require__(168);
+	
+	var _lruCache2 = _interopRequireDefault(_lruCache);
+	
+	var _deepEquals = __webpack_require__(169);
+	
+	var _deepEquals2 = _interopRequireDefault(_deepEquals);
+	
+	function createCache(limit, equals) {
+	  return limit === 1 ? _singletonCache2['default'](equals) : _lruCache2['default'](limit, equals);
+	}
+	
+	function memoize() {
+	  var limit = 1;
+	  var equals = function equals(valueA, valueB) {
+	    return valueA === valueB;
+	  };
+	  var deepObjects = false;
+	
+	  for (var _len = arguments.length, config = Array(_len), _key = 0; _key < _len; _key++) {
+	    config[_key] = arguments[_key];
+	  }
+	
+	  if (typeof config[0] === 'number') {
+	    limit = config.shift();
+	  }
+	  if (typeof config[0] === 'function') {
+	    equals = config.shift();
+	  }
+	  if (typeof config[0] === 'boolean') {
+	    deepObjects = config[0];
+	  }
+	
+	  var cache = createCache(limit, _deepEquals2['default'](equals, deepObjects));
+	
+	  return function (fn) {
+	    return function () {
+	      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	        args[_key2] = arguments[_key2];
+	      }
+	
+	      var value = cache.get(args);
+	      if (value === undefined) {
+	        value = fn.apply(fn, args);
+	        cache.put(args, value);
+	      }
+	      return value;
+	    };
+	  };
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 167 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	exports["default"] = singletonCache;
+	
+	function singletonCache(equals) {
+	  var entry = undefined;
+	  return {
+	    get: function get(key) {
+	      if (entry && equals(key, entry.key)) {
+	        return entry.value;
+	      }
+	    },
+	
+	    put: function put(key, value) {
+	      entry = { key: key, value: value };
+	    }
+	  };
+	}
+	
+	module.exports = exports["default"];
+
+/***/ },
+/* 168 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	exports.__esModule = true;
+	exports["default"] = lruCache;
+	
+	function lruCache(limit, equals) {
+	  var entries = [];
+	
+	  function get(key) {
+	    for (var index = 0; index < entries.length; index++) {
+	      var entry = entries[index];
+	      if (equals(key, entry.key)) {
+	        if (index > 0) {
+	          // move this entry to the top of the cache
+	          entries.splice(index, 1);
+	          entries.unshift(entry);
+	        }
+	        return entry.value;
+	      }
+	    }
+	  }
+	
+	  function put(key, value) {
+	    if (!get(key)) {
+	      entries.unshift({ key: key, value: value });
+	      if (entries.length > limit) {
+	        entries.pop();
+	      }
+	    }
+	  }
+	
+	  return { get: get, put: put };
+	}
+	
+	module.exports = exports["default"];
+
+/***/ },
+/* 169 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	exports.__esModule = true;
+	exports['default'] = deepEquals;
+	var hasOwn = Object.prototype.hasOwnProperty;
+	
+	function deepEquals(equals, deepObjects) {
+	  function deep(valueA, valueB) {
+	    if (equals(valueA, valueB)) {
+	      return true;
+	    }
+	
+	    if (Array.isArray(valueA)) {
+	      if (!Array.isArray(valueB) || valueA.length !== valueB.length) {
+	        return false;
+	      }
+	      for (var index = 0; index < valueA.length; index++) {
+	        if (!deep(valueA[index], valueB[index])) {
+	          return false;
+	        }
+	      }
+	      // could not find unequal items
+	      return true;
+	    }
+	
+	    if (Array.isArray(valueB)) {
+	      return false;
+	    }
+	
+	    if (typeof valueA === 'object') {
+	      if (typeof valueB !== 'object') {
+	        return false;
+	      }
+	
+	      var isANull = valueA === null;
+	      var isBNull = valueB === null;
+	      if (isANull || isBNull) {
+	        return isANull === isBNull;
+	      }
+	
+	      var aKeys = Object.keys(valueA);
+	      var bKeys = Object.keys(valueB);
+	
+	      if (aKeys.length !== bKeys.length) {
+	        return false;
+	      }
+	
+	      for (var index = 0; index < aKeys.length; index++) {
+	        var key = aKeys[index];
+	        if (hasOwn.call(valueA, key) && (!hasOwn.call(valueB, key) || !(deepObjects ? deep : equals)(valueA[key], valueB[key]))) {
+	          return false;
+	        }
+	      }
+	      // could not find unequal keys or values
+	      return true;
+	    }
+	    return false;
+	  }
+	
+	  return deep;
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -20093,7 +20335,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _ChildSearchResult = __webpack_require__(166);
+	var _ChildSearchResult = __webpack_require__(171);
 	
 	var _ChildSearchResult2 = _interopRequireDefault(_ChildSearchResult);
 	
@@ -20123,7 +20365,7 @@
 	        return _react2.default.createElement(
 	          'div',
 	          null,
-	          _react2.default.createElement(_ChildSearchResult2.default, { allData: arr, login: arr.login })
+	          _react2.default.createElement(_ChildSearchResult2.default, { allData: arr, login: arr.login, key: arr.id })
 	        );
 	      }.bind(this));
 	      return _react2.default.createElement(
@@ -20140,7 +20382,7 @@
 	exports.default = SearchResult;
 
 /***/ },
-/* 166 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20205,7 +20447,7 @@
 	exports.default = ChildSearchResult;
 
 /***/ },
-/* 167 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20220,7 +20462,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _ChildSearchResult = __webpack_require__(166);
+	var _ChildSearchResult = __webpack_require__(171);
 	
 	var _ChildSearchResult2 = _interopRequireDefault(_ChildSearchResult);
 	
