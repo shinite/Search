@@ -20023,7 +20023,7 @@
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function($) {'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -20065,10 +20065,13 @@
 	            name: "",
 	            typing: false,
 	            typingTimeOut: 0,
-	            cache: []
+	            cache: [],
+	            sugg: []
 	        };
 	        _this.changeName = _this.changeName.bind(_this);
+	        _this.changeBySuggest = _this.changeBySuggest.bind(_this);
 	        _this.sendtoParent = _this.sendtoParent.bind(_this);
+	        _this.suggestions = _this.suggestions.bind(_this);
 	        return _this;
 	    }
 	
@@ -20095,21 +20098,43 @@
 	        key: 'sendtoParent',
 	        value: function sendtoParent() {
 	
-	            this.suggestions(this.state.name);
+	            var self = this;
+	
+	            this.setState({ sugg: self.suggestions(this.state.name) });
+	
+	            if (this.state.sugg.length > 0) {
+	                $('#select').show();
+	                $('#select').empty();
+	                $.each(this.state.sugg, function (i, p) {
+	                    $('#select').append($('<option></option>').val(p).html(p));
+	                });
+	            }
+	
 	            this.props.searching(this.state.name, "true");
 	        }
 	    }, {
 	        key: 'suggestions',
 	        value: function suggestions(name) {
 	
+	            var t = [];
+	
 	            for (var i = 0; i < this.state.cache.length; i++) {
-	                if (this.state.cache[i] == name) {
-	                    return name;
+	
+	                if (this.state.cache[i].includes(name)) {
+	                    t.push(this.state.cache[i].trim());
 	                }
 	            }
 	            this.state.cache[i] = name;
+	            return t;
 	
 	            console.log(this.state.cache);
+	        }
+	    }, {
+	        key: 'changeBySuggest',
+	        value: function changeBySuggest(event) {
+	            console.log("in suggest");
+	            this.setState({ name: event.target.value });
+	            this.sendtoParent();
 	        }
 	    }, {
 	        key: 'render',
@@ -20118,7 +20143,20 @@
 	            return _react2.default.createElement(
 	                'div',
 	                { style: styles },
-	                _react2.default.createElement('input', { style: styles, id: 'SearchBox', type: 'text', placeholder: 'Enter the name', onChange: this.changeName })
+	                _react2.default.createElement('input', { style: styles, id: 'SearchBox', type: 'text', placeholder: 'Enter the name', value: this.state.name, onChange: this.changeName }),
+	                _react2.default.createElement(
+	                    'form',
+	                    { id: 'myForm' },
+	                    _react2.default.createElement(
+	                        'select',
+	                        { id: 'select', onChange: this.changeBySuggest },
+	                        _react2.default.createElement(
+	                            'option',
+	                            null,
+	                            'Choose suggestion'
+	                        )
+	                    )
+	                )
 	            );
 	        }
 	    }]);
@@ -20127,6 +20165,7 @@
 	}(_react.Component);
 	
 	exports.default = SearchBox;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)))
 
 /***/ },
 /* 165 */

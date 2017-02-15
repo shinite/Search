@@ -7,6 +7,8 @@ import memoize from 'lru-memoize';
         alignItems: 'center',
        };
 
+
+
 export default class SearchBox extends Component {
 
    constructor(props) {    
@@ -16,9 +18,12 @@ export default class SearchBox extends Component {
             typing :false,
             typingTimeOut :0,
             cache:[],
+            sugg:[],
         };
         this.changeName=this.changeName.bind(this);
+        this.changeBySuggest=this.changeBySuggest.bind(this);
         this.sendtoParent=this.sendtoParent.bind(this);
+        this.suggestions=this.suggestions.bind(this);
     }
 
     changeName(event) {
@@ -35,33 +40,55 @@ export default class SearchBox extends Component {
         self.setState({ 
             name: event.target.value,
             typing:false,
-            
+
         }); 
 
         
     }
 
     sendtoParent(){
+
+        var self=this
         
-        this.suggestions(this.state.name)
+         this.setState({sugg: self.suggestions(this.state.name)});
+
+        if(this.state.sugg.length>0)
+        {
+            $('#select').show();
+            $('#select').empty();
+                $.each(this.state.sugg, function(i, p) {
+                    $('#select').append($('<option></option>').val(p).html(p));
+                });
+        }
+
         this.props.searching(this.state.name,"true");
     }
 
     suggestions(name){
 
+        var t=[];
 
         for(var i=0;i<this.state.cache.length;i++)
         {
-            if(this.state.cache[i]==name)
+            
+            if(this.state.cache[i].includes(name))
             {
-                return name
+                t.push( this.state.cache[i].trim());
             }
-                
         }
         this.state.cache[i]=name;
+        return (t);
+
+        
 
         console.log(this.state.cache);
 
+    }
+
+    changeBySuggest(event){
+        console.log("in suggest")
+        this.setState({name: event.target.value});
+        this.sendtoParent();
     }
 
 
@@ -71,8 +98,15 @@ export default class SearchBox extends Component {
         return (
             <div style={styles} >
             
-                 <input style={styles} id="SearchBox" type="text"  placeholder='Enter the name'  onChange={this.changeName} />
+                 <input style={styles} id="SearchBox" type="text"  placeholder="Enter the name" value={this.state.name} onChange={this.changeName} />
                 
+                     <form id="myForm">
+                      <select id="select" onChange={this.changeBySuggest}>
+                        <option>Choose suggestion</option>
+                      </select>
+                    </form>
+
+               
             </div>
         );
     }
