@@ -37,7 +37,6 @@ class App extends React.Component {
 	findName(name){
 		
 		this.setState({active: false})
-		console.log(name)
 		$('#loading-image').show();
 		$('#error').hide();
 		 $.ajax({
@@ -103,6 +102,7 @@ class App extends React.Component {
 
 		this.setState({rerender:true})
 	}
+
 	changeEntries(e){
 		
 		 page = 1;
@@ -145,8 +145,6 @@ class App extends React.Component {
 	       <div id="error">User Not Found</div>
 
 	      <SearchResult List={this.state.pageList}/>
-
-
 	      <input type="button" onClick={this.nextPage} value="Next"/>
 
 	      </div>

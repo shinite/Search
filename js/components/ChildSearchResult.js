@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 
+ 
 
 export default class ChildSearchResult extends Component {
 
@@ -10,13 +11,20 @@ export default class ChildSearchResult extends Component {
 
 
     render (){
+      
       return(
         <div>
-        <pre>
-          LOGIN: {this.props.login} <br/>
-          ID   : {this.props.allData.id} <br/>
-          URL  : {this.props.allData.html_url} <br/>
-        </pre>
+            <div style={{marginTop: '10px' ,marginBottom:'10px'}} >
+            <img  style={{float:'left', height: "50px", width: "50px" , display: 'inline', marginTop: '10px' ,marginBottom:'10px'}} src={this.props.allData.avatar_url} alt="No image" />  
+              <div style={{ display: 'inline', marginLeft: '40px' ,paddingTop: '30px'}}>
+              LOGIN: {this.props.login} <br/>
+              </div>
+              <div style={{ display: 'inline', marginLeft: '40px' }}>
+              ID   : {this.props.allData.id} <br/>
+              </div>
+            </div>
+            <br/>
+            <br/>
         </div>
         )
     }

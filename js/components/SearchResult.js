@@ -13,7 +13,7 @@ export default class SearchResult extends Component {
       
     var ListUsers = this.props.List.map(function(arr) {
      return (
-       <div>
+       <div style={{ display: 'block'}}>
        <ChildSearchResult allData={arr} login={arr.login} key={arr.id} />
        </div>
      );

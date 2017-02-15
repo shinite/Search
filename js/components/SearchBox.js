@@ -79,14 +79,11 @@ export default class SearchBox extends Component {
         this.state.cache[i]=name;
         return (t);
 
-        
-
-        console.log(this.state.cache);
 
     }
 
     changeBySuggest(event){
-        console.log("in suggest")
+        
         this.setState({name: event.target.value});
         this.sendtoParent();
     }

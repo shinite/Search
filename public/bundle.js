@@ -148,7 +148,6 @@
 			value: function findName(name) {
 	
 				this.setState({ active: false });
-				console.log(name);
 				$('#loading-image').show();
 				$('#error').hide();
 				$.ajax({
@@ -20126,13 +20125,11 @@
 	            }
 	            this.state.cache[i] = name;
 	            return t;
-	
-	            console.log(this.state.cache);
 	        }
 	    }, {
 	        key: 'changeBySuggest',
 	        value: function changeBySuggest(event) {
-	            console.log("in suggest");
+	
 	            this.setState({ name: event.target.value });
 	            this.sendtoParent();
 	        }
@@ -20431,7 +20428,7 @@
 	      var ListUsers = this.props.List.map(function (arr) {
 	        return _react2.default.createElement(
 	          'div',
-	          null,
+	          { style: { display: 'block' } },
 	          _react2.default.createElement(_ChildSearchResult2.default, { allData: arr, login: arr.login, key: arr.id })
 	        );
 	      }.bind(this));
@@ -20485,25 +20482,33 @@
 	  _createClass(ChildSearchResult, [{
 	    key: 'render',
 	    value: function render() {
+	
 	      return _react2.default.createElement(
 	        'div',
 	        null,
 	        _react2.default.createElement(
-	          'pre',
-	          null,
-	          'LOGIN: ',
-	          this.props.login,
-	          ' ',
-	          _react2.default.createElement('br', null),
-	          'ID   : ',
-	          this.props.allData.id,
-	          ' ',
-	          _react2.default.createElement('br', null),
-	          'URL  : ',
-	          this.props.allData.html_url,
-	          ' ',
-	          _react2.default.createElement('br', null)
-	        )
+	          'div',
+	          { style: { marginTop: '10px', marginBottom: '10px' } },
+	          _react2.default.createElement('img', { style: { float: 'left', height: "50px", width: "50px", display: 'inline', marginTop: '10px', marginBottom: '10px' }, src: this.props.allData.avatar_url, alt: 'No image' }),
+	          _react2.default.createElement(
+	            'div',
+	            { style: { display: 'inline', marginLeft: '40px', paddingTop: '30px' } },
+	            'LOGIN: ',
+	            this.props.login,
+	            ' ',
+	            _react2.default.createElement('br', null)
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { style: { display: 'inline', marginLeft: '40px' } },
+	            'ID   : ',
+	            this.props.allData.id,
+	            ' ',
+	            _react2.default.createElement('br', null)
+	          )
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null)
 	      );
 	    }
 	  }]);
