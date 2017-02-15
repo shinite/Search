@@ -34,18 +34,35 @@ export default class SearchBox extends Component {
         
         self.setState({ 
             name: event.target.value,
-            typing:false
+            typing:false,
+            
         }); 
 
         
     }
 
     sendtoParent(){
-       
+        
+        this.suggestions(this.state.name)
         this.props.searching(this.state.name,"true");
     }
 
+    suggestions(name){
 
+
+        for(var i=0;i<this.state.cache.length;i++)
+        {
+            if(this.state.cache[i]==name)
+            {
+                return name
+            }
+                
+        }
+        this.state.cache[i]=name;
+
+        console.log(this.state.cache);
+
+    }
 
 
    

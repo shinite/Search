@@ -24,7 +24,6 @@ class App extends React.Component {
             entries: 5,
             pageList:[],
             rerender:"",
-            error:false	,
         };
 
         this.findName=this.findName.bind(this);
@@ -38,7 +37,9 @@ class App extends React.Component {
 	findName(name){
 		
 		this.setState({active: false})
+		console.log(name)
 		$('#loading-image').show();
+		$('#error').hide();
 		 $.ajax({
 	      url: 'https://api.github.com/search/users?q='+name,
 	      dataType: 'json',
@@ -49,21 +50,29 @@ class App extends React.Component {
 	      success: function(data) {
 	       
 	         $('#loading-image').hide();
-	         this.setState({userList:data.items,total:data.total_count, error:false});
+	         this.setState({ userList:data.items,total:data.total_count });
+	        
+
+	         if(this.state.userList.length==0)
+	         {
+	         	$('#error').show();
+	         }
+	         else
+	         {
+	         	$('#error').hide();
+
+	         }
 	         page=1;
 	         this.state.pageList=[];
 	         for(var i=(page-1)*this.state.entries,j=0;i<Math.min(page*this.state.entries,data.total_count);i++,j++)
-				{
-					this.state.pageList[j]=this.state.userList[i];
-					
-				}
+			{
+				this.state.pageList[j]=this.state.userList[i];
+				
+			}
+			this.setState({rerender:true})
 
 	      }.bind(this),
 	      error: function(xhr, status, err) {
-	      	if(status='error')
-	      	{
-	      		this.setState({error: true})
-	      	}
 	        console.error(this.state.url, status, err.toString());
 	         $('#loading-image').hide();
 	      }.bind(this)
@@ -108,23 +117,6 @@ class App extends React.Component {
 	}
 
   render(){
-  	if(this.state.error==true)
-  	{
-
-	return (
-	      <div>
-	      <SearchBox searching={this.findName}/>
-	      Enter the no of entries you wish to see :
-	      <input type="text"  style = {styles} onChange={this.changeEntries} />
-	     	<div id='error'>
-	     	Please enter some valid value
-	     	</div>
-	      </div>
-	    );
-	    
-  	}
-  	else
-  	{
   	if(this.state.active===true)
   	{
     return (
@@ -132,6 +124,7 @@ class App extends React.Component {
       <SearchBox searching={this.findName}/>
       Enter the no of entries you wish to see :
       <input type="text"  style = {styles} onChange={this.changeEntries} />
+      
       <SearchResult List={this.state.pageList}/>
 
      
@@ -148,6 +141,8 @@ class App extends React.Component {
 	        Enter the no of entries you wish to see :
       <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image">loading....</div>
+	      <br/>
+	       <div id="error">User Not Found</div>
 
 	      <SearchResult List={this.state.pageList}/>
 
@@ -165,6 +160,9 @@ class App extends React.Component {
 	        Enter the no of entries you wish to see :
       <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image" >loading....</div>
+	      <br/>
+	      <div id="error">User Not Found</div>
+
 	      <SearchResult List={this.state.pageList}/>
 	    
 	      </div>
@@ -178,6 +176,9 @@ class App extends React.Component {
 	        Enter the no of entries you wish to see :
       <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image" >loading....</div>
+	      <br/>
+	      <div id="error">User Not Found</div>
+
 	      <SearchResult List={this.state.pageList}/>
 	       <input type="button" onClick={this.prevPage} value="Pre"/>
 	      <input type="button" onClick={this.nextPage} value="Next"/>
@@ -193,6 +194,9 @@ class App extends React.Component {
 	        Enter the no of entries you wish to see :
       <input type="text"  style = {styles} onChange={this.changeEntries} />
 	      <div id="loading-image" >loading....</div>
+	      <br/>
+	      <div id="error">User Not Found</div>
+
 	      <SearchResult List={this.state.pageList}/>
 
 	      <input type="button" onClick={this.prevPage} value="Pre"/>
@@ -201,7 +205,6 @@ class App extends React.Component {
 	      );
 		}
 	}
-}
 	}
 }
 ReactDOM.render(<App />, document.getElementById('content'));

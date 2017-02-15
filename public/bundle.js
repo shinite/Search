@@ -133,8 +133,7 @@
 				total: "",
 				entries: 5,
 				pageList: [],
-				rerender: "",
-				error: false
+				rerender: ""
 			};
 	
 			_this.findName = _this.findName.bind(_this);
@@ -149,7 +148,9 @@
 			value: function findName(name) {
 	
 				this.setState({ active: false });
+				console.log(name);
 				$('#loading-image').show();
+				$('#error').hide();
 				$.ajax({
 					url: 'https://api.github.com/search/users?q=' + name,
 					dataType: 'json',
@@ -160,17 +161,21 @@
 					success: function (data) {
 	
 						$('#loading-image').hide();
-						this.setState({ userList: data.items, total: data.total_count, error: false });
+						this.setState({ userList: data.items, total: data.total_count });
+	
+						if (this.state.userList.length == 0) {
+							$('#error').show();
+						} else {
+							$('#error').hide();
+						}
 						page = 1;
 						this.state.pageList = [];
 						for (var i = (page - 1) * this.state.entries, j = 0; i < Math.min(page * this.state.entries, data.total_count); i++, j++) {
 							this.state.pageList[j] = this.state.userList[i];
 						}
+						this.setState({ rerender: true });
 					}.bind(this),
 					error: function (xhr, status, err) {
-						if (status = 'error') {
-							this.setState({ error: true });
-						}
 						console.error(this.state.url, status, err.toString());
 						$('#loading-image').hide();
 					}.bind(this)
@@ -213,92 +218,100 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				if (this.state.error == true) {
-	
+				if (this.state.active === true) {
 					return _react2.default.createElement(
 						'div',
 						null,
 						_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
 						'Enter the no of entries you wish to see :',
 						_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-						_react2.default.createElement(
-							'div',
-							{ id: 'error' },
-							'Please enter some valid value'
-						)
+						_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList })
 					);
 				} else {
-					if (this.state.active === true) {
+					if (page == 1 && this.state.total > page * this.state.entries) {
 						return _react2.default.createElement(
 							'div',
 							null,
 							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
 							'Enter the no of entries you wish to see :',
 							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+							_react2.default.createElement(
+								'div',
+								{ id: 'loading-image' },
+								'loading....'
+							),
+							_react2.default.createElement('br', null),
+							_react2.default.createElement(
+								'div',
+								{ id: 'error' },
+								'User Not Found'
+							),
+							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
+							_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
+						);
+					} else if (page == 1 && this.state.total <= page * this.state.entries) {
+						return _react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+							'Enter the no of entries you wish to see :',
+							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+							_react2.default.createElement(
+								'div',
+								{ id: 'loading-image' },
+								'loading....'
+							),
+							_react2.default.createElement('br', null),
+							_react2.default.createElement(
+								'div',
+								{ id: 'error' },
+								'User Not Found'
+							),
 							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList })
 						);
+					} else if (this.state.total > page * this.state.entries) {
+						return _react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+							'Enter the no of entries you wish to see :',
+							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+							_react2.default.createElement(
+								'div',
+								{ id: 'loading-image' },
+								'loading....'
+							),
+							_react2.default.createElement('br', null),
+							_react2.default.createElement(
+								'div',
+								{ id: 'error' },
+								'User Not Found'
+							),
+							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
+							_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' }),
+							_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
+						);
 					} else {
-						if (page == 1 && this.state.total > page * this.state.entries) {
-							return _react2.default.createElement(
+						return _react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
+							'Enter the no of entries you wish to see :',
+							_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
+							_react2.default.createElement(
 								'div',
-								null,
-								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-								'Enter the no of entries you wish to see :',
-								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-								_react2.default.createElement(
-									'div',
-									{ id: 'loading-image' },
-									'loading....'
-								),
-								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-								_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
-							);
-						} else if (page == 1 && this.state.total <= page * this.state.entries) {
-							return _react2.default.createElement(
+								{ id: 'loading-image' },
+								'loading....'
+							),
+							_react2.default.createElement('br', null),
+							_react2.default.createElement(
 								'div',
-								null,
-								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-								'Enter the no of entries you wish to see :',
-								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-								_react2.default.createElement(
-									'div',
-									{ id: 'loading-image' },
-									'loading....'
-								),
-								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList })
-							);
-						} else if (this.state.total > page * this.state.entries) {
-							return _react2.default.createElement(
-								'div',
-								null,
-								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-								'Enter the no of entries you wish to see :',
-								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-								_react2.default.createElement(
-									'div',
-									{ id: 'loading-image' },
-									'loading....'
-								),
-								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-								_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' }),
-								_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
-							);
-						} else {
-							return _react2.default.createElement(
-								'div',
-								null,
-								_react2.default.createElement(_SearchBox2.default, { searching: this.findName }),
-								'Enter the no of entries you wish to see :',
-								_react2.default.createElement('input', { type: 'text', style: styles, onChange: this.changeEntries }),
-								_react2.default.createElement(
-									'div',
-									{ id: 'loading-image' },
-									'loading....'
-								),
-								_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-								_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' })
-							);
-						}
+								{ id: 'error' },
+								'User Not Found'
+							),
+							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
+							_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' })
+						);
 					}
 				}
 			}
@@ -20075,13 +20088,28 @@
 	            self.setState({
 	                name: event.target.value,
 	                typing: false
+	
 	            });
 	        }
 	    }, {
 	        key: 'sendtoParent',
 	        value: function sendtoParent() {
 	
+	            this.suggestions(this.state.name);
 	            this.props.searching(this.state.name, "true");
+	        }
+	    }, {
+	        key: 'suggestions',
+	        value: function suggestions(name) {
+	
+	            for (var i = 0; i < this.state.cache.length; i++) {
+	                if (this.state.cache[i] == name) {
+	                    return name;
+	                }
+	            }
+	            this.state.cache[i] = name;
+	
+	            console.log(this.state.cache);
 	        }
 	    }, {
 	        key: 'render',
