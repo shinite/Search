@@ -100,10 +100,6 @@
 	
 	var _SearchResult2 = _interopRequireDefault(_SearchResult);
 	
-	var _Pagination = __webpack_require__(172);
-	
-	var _Pagination2 = _interopRequireDefault(_Pagination);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -112,12 +108,14 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var page;
+	var page; // Stores value of current Page
 	
 	var styles = {
 		width: '100px',
 		height: '10px'
 	};
+	
+	/* This component has two children : SearchBox and SearchResult*/
 	
 	var App = function (_React$Component) {
 		_inherits(App, _React$Component);
@@ -128,13 +126,12 @@
 			var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 	
 			_this.state = {
-				active: true,
-				userList: [],
-				total: "",
-				entries: 5,
-				pageList: [],
-				rerender: ""
-			};
+				active: true, //To rerender when loading has to be displayed.
+				fullList: [], //Stores the entire Json array 
+				total: "", // Stores Total No. of Records that are there for a particular value
+				entries: 5, // No. of records user wishes to see in curent page
+				pageList: [], // List of records that will be displayed in current Page
+				rerender: "" };
 	
 			_this.findName = _this.findName.bind(_this);
 			_this.changeEntries = _this.changeEntries.bind(_this);
@@ -147,22 +144,29 @@
 			key: 'findName',
 			value: function findName(name) {
 	
+				/*Function that makes the ajax request to GITHUB Search API. 
+	     It recieves a 'name' from SearchBox which is used to get json from the API.
+	     If the request is successful the required states are set and page is rerendered.
+	    */
+	
 				this.setState({ active: false });
 				$('#loading-image').show();
+				$('#traverse').hide();
 				$('#error').hide();
 				$.ajax({
-					url: 'https://api.github.com/search/users?q=' + name,
+					url: 'https://api.github.com/search/users?q=' + name + '&per_page=100',
 					dataType: 'json',
 					cache: false,
 					complete: function complete() {
 						$('#loading-image').hide();
+						$('#traverse').show();
 					},
 					success: function (data) {
-	
 						$('#loading-image').hide();
-						this.setState({ userList: data.items, total: data.total_count });
+						$('#traverse').show();
+						this.setState({ fullList: data.items, total: data.total_count });
 	
-						if (this.state.userList.length == 0) {
+						if (this.state.fullList.length == 0) {
 							$('#error').show();
 						} else {
 							$('#error').hide();
@@ -170,24 +174,27 @@
 						page = 1;
 						this.state.pageList = [];
 						for (var i = (page - 1) * this.state.entries, j = 0; i < Math.min(page * this.state.entries, data.total_count); i++, j++) {
-							this.state.pageList[j] = this.state.userList[i];
+							this.state.pageList[j] = this.state.fullList[i];
 						}
 						this.setState({ rerender: true });
 					}.bind(this),
 					error: function (xhr, status, err) {
 						console.error(this.state.url, status, err.toString());
 						$('#loading-image').hide();
+						$('#traverse').show();
 					}.bind(this)
 				});
 			}
 		}, {
 			key: 'nextPage',
 			value: function nextPage() {
+	
+				/* function to select what elements are to be displayed when we click the next Button*/
+	
 				page++;
 	
 				for (var i = (page - 1) * this.state.entries, j = 0; i < Math.min(page * this.state.entries, this.state.total); i++, j++) {
-	
-					this.state.pageList[j] = this.state.userList[i];
+					this.state.pageList[j] = this.state.fullList[i];
 				}
 	
 				this.setState({ rerender: true });
@@ -195,10 +202,12 @@
 		}, {
 			key: 'prevPage',
 			value: function prevPage() {
+	
+				/* function to select what elements are to be displayed when we click the prev Button*/
 				page--;
 	
 				for (var i = (page - 1) * this.state.entries, j = 0; i < Math.min(page * this.state.entries, this.state.total); i++, j++) {
-					this.state.pageList[j] = this.state.userList[i];
+					this.state.pageList[j] = this.state.fullList[i];
 				}
 	
 				this.setState({ rerender: true });
@@ -207,16 +216,19 @@
 			key: 'changeEntries',
 			value: function changeEntries(e) {
 	
+				/*Sets the value of Entries ie., the No. of Records user wishes to see in current Page*/
+	
 				page = 1;
 				this.state.pageList = [];
 				for (var i = (page - 1) * e.target.value, j = 0; i < Math.min(page * e.target.value, this.state.total); i++, j++) {
-					this.state.pageList[j] = this.state.userList[i];
+					this.state.pageList[j] = this.state.fullList[i];
 				}
 				this.setState({ entries: e.target.value });
 			}
 		}, {
 			key: 'render',
 			value: function render() {
+	
 				if (this.state.active === true) {
 					return _react2.default.createElement(
 						'div',
@@ -246,7 +258,7 @@
 								'User Not Found'
 							),
 							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
+							_react2.default.createElement('input', { id: 'traverse', type: 'button', onClick: this.nextPage, value: 'Next' })
 						);
 					} else if (page == 1 && this.state.total <= page * this.state.entries) {
 						return _react2.default.createElement(
@@ -287,8 +299,8 @@
 								'User Not Found'
 							),
 							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.nextPage, value: 'Next' })
+							_react2.default.createElement('input', { id: 'traverse', type: 'button', onClick: this.prevPage, value: 'Pre' }),
+							_react2.default.createElement('input', { type: 'button', id: 'traverse', onClick: this.nextPage, value: 'Next' })
 						);
 					} else {
 						return _react2.default.createElement(
@@ -309,7 +321,7 @@
 								'User Not Found'
 							),
 							_react2.default.createElement(_SearchResult2.default, { List: this.state.pageList }),
-							_react2.default.createElement('input', { type: 'button', onClick: this.prevPage, value: 'Pre' })
+							_react2.default.createElement('input', { type: 'button', id: 'traverse', onClick: this.prevPage, value: 'Pre' })
 						);
 					}
 				}
@@ -20055,18 +20067,20 @@
 	var SearchBox = function (_Component) {
 	    _inherits(SearchBox, _Component);
 	
+	    /*Component that contains the Input Field. 
+	    The values entered in the SearchBox are sent to Parent component(App) */
+	
 	    function SearchBox(props) {
 	        _classCallCheck(this, SearchBox);
 	
 	        var _this = _possibleConstructorReturn(this, (SearchBox.__proto__ || Object.getPrototypeOf(SearchBox)).call(this, props));
 	
 	        _this.state = {
-	            name: "",
+	            name: "", //Stores the value that is typed by user
 	            typing: false,
 	            typingTimeOut: 0,
 	            cache: [],
-	            sugg: []
-	        };
+	            sugg: [] };
 	        _this.changeName = _this.changeName.bind(_this);
 	        _this.changeBySuggest = _this.changeBySuggest.bind(_this);
 	        _this.sendtoParent = _this.sendtoParent.bind(_this);
@@ -20077,6 +20091,9 @@
 	    _createClass(SearchBox, [{
 	        key: 'changeName',
 	        value: function changeName(event) {
+	            /*Sets the value of 'name' when user changes the value in Search Field
+	              Sends value to sendToParent() when user stops typing.
+	            */
 	            var self = this;
 	
 	            if (self.typingTimeOut) {
@@ -20097,8 +20114,11 @@
 	        key: 'sendtoParent',
 	        value: function sendtoParent() {
 	
-	            var self = this;
+	            /*Sends value to App Component.
+	              sets value of sugg ie., Suggestions the user get.
+	            */
 	
+	            var self = this;
 	            this.setState({ sugg: self.suggestions(this.state.name) });
 	
 	            if (this.state.sugg.length > 0) {
@@ -20115,6 +20135,8 @@
 	        key: 'suggestions',
 	        value: function suggestions(name) {
 	
+	            /*Function that determines what suggestions are to be given to the user for particular value*/
+	
 	            var t = [];
 	
 	            for (var i = 0; i < this.state.cache.length; i++) {
@@ -20129,14 +20151,13 @@
 	    }, {
 	        key: 'changeBySuggest',
 	        value: function changeBySuggest(event) {
-	
+	            /*Function that rerenders the page when user selects value from suggestion drop down*/
 	            this.setState({ name: event.target.value });
 	            this.sendtoParent();
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	
 	            return _react2.default.createElement(
 	                'div',
 	                { style: styles },
@@ -20411,20 +20432,21 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	/* This component has one Child : ChildSearchResult*/
+	
 	var SearchResult = function (_Component) {
 	  _inherits(SearchResult, _Component);
 	
 	  function SearchResult(props) {
 	    _classCallCheck(this, SearchResult);
 	
-	    /* Note props is passed into the constructor in order to be used */
 	    return _possibleConstructorReturn(this, (SearchResult.__proto__ || Object.getPrototypeOf(SearchResult)).call(this, props));
 	  }
 	
 	  _createClass(SearchResult, [{
 	    key: 'render',
 	    value: function render() {
-	
+	      /*Maps values of List so that they can be sent one by one to Child component */
 	      var ListUsers = this.props.List.map(function (arr) {
 	        return _react2.default.createElement(
 	          'div',
@@ -20475,14 +20497,13 @@
 	  function ChildSearchResult(props) {
 	    _classCallCheck(this, ChildSearchResult);
 	
-	    /* Note props is passed into the constructor in order to be used */
 	    return _possibleConstructorReturn(this, (ChildSearchResult.__proto__ || Object.getPrototypeOf(ChildSearchResult)).call(this, props));
 	  }
 	
 	  _createClass(ChildSearchResult, [{
 	    key: 'render',
 	    value: function render() {
-	
+	      /*Renders the Props that are recieved by the Parent (SearchResult)*/
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -20517,127 +20538,6 @@
 	}(_react.Component);
 	
 	exports.default = ChildSearchResult;
-
-/***/ },
-/* 172 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(6);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _ChildSearchResult = __webpack_require__(171);
-	
-	var _ChildSearchResult2 = _interopRequireDefault(_ChildSearchResult);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var current_page = 1;
-	var records_per_page = 5;
-	
-	var SearchResult = function (_Component) {
-	    _inherits(SearchResult, _Component);
-	
-	    function SearchResult(props) {
-	        _classCallCheck(this, SearchResult);
-	
-	        /* Note props is passed into the constructor in order to be used */
-	        return _possibleConstructorReturn(this, (SearchResult.__proto__ || Object.getPrototypeOf(SearchResult)).call(this, props));
-	    }
-	
-	    _createClass(SearchResult, [{
-	        key: 'prevPage',
-	        value: function prevPage() {
-	            if (current_page > 1) {
-	                current_page--;
-	                changePage(current_page);
-	            }
-	        }
-	    }, {
-	        key: 'nextPage',
-	        value: function nextPage() {
-	            if (current_page < numPages()) {
-	                current_page++;
-	                changePage(current_page);
-	            }
-	        }
-	    }, {
-	        key: 'changePage',
-	        value: function changePage(page) {
-	            var btn_next = document.getElementById("btn_next");
-	            var btn_prev = document.getElementById("btn_prev");
-	            var listing_table = document.getElementById("listingTable");
-	            var page_span = document.getElementById("page");
-	
-	            // Validate page
-	            if (page < 1) page = 1;
-	            if (page > numPages()) page = numPages();
-	
-	            listing_table.innerHTML = "";
-	
-	            for (var i = (page - 1) * records_per_page; i < page * records_per_page; i++) {
-	                listing_table.innerHTML += this.props.objJson[i].adName + "<br>";
-	            }
-	            page_span.innerHTML = page;
-	
-	            if (page == 1) {
-	                btn_prev.style.visibility = "hidden";
-	            } else {
-	                btn_prev.style.visibility = "visible";
-	            }
-	
-	            if (page == numPages()) {
-	                btn_next.style.visibility = "hidden";
-	            } else {
-	                btn_next.style.visibility = "visible";
-	            }
-	        }
-	    }, {
-	        key: 'numPages',
-	        value: function numPages() {
-	            return Math.ceil(this.props.objJson.length / records_per_page);
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	
-	            return _react2.default.createElement(
-	                'div',
-	                { id: 'listingTable' },
-	                _react2.default.createElement(
-	                    'a',
-	                    { href: this.prevPage, id: 'btn_prev' },
-	                    'Prev'
-	                ),
-	                _react2.default.createElement(
-	                    'a',
-	                    { href: this.nextPage, id: 'btn_next' },
-	                    'Next'
-	                ),
-	                'page: ',
-	                _react2.default.createElement('span', { id: 'page' })
-	            );
-	        }
-	    }]);
-	
-	    return SearchResult;
-	}(_react.Component);
-	
-	exports.default = SearchResult;
 
 /***/ }
 /******/ ]);

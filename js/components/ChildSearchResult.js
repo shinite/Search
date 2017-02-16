@@ -4,18 +4,16 @@ import React, {Component, PropTypes} from 'react';
 
 export default class ChildSearchResult extends Component {
 
-   constructor(props) {    /* Note props is passed into the constructor in order to be used */
+   constructor(props) {    
         super(props);
-      
     }
 
-
     render (){
-      
+      /*Renders the Props that are recieved by the Parent (SearchResult)*/
       return(
-        <div>
+          <div>
             <div style={{marginTop: '10px' ,marginBottom:'10px'}} >
-            <img  style={{float:'left', height: "50px", width: "50px" , display: 'inline', marginTop: '10px' ,marginBottom:'10px'}} src={this.props.allData.avatar_url} alt="No image" />  
+              <img  style={{float:'left', height: "50px", width: "50px" , display: 'inline', marginTop: '10px' ,marginBottom:'10px'}} src={this.props.allData.avatar_url} alt="No image" />  
               <div style={{ display: 'inline', marginLeft: '40px' ,paddingTop: '30px'}}>
               LOGIN: {this.props.login} <br/>
               </div>
@@ -25,7 +23,7 @@ export default class ChildSearchResult extends Component {
             </div>
             <br/>
             <br/>
-        </div>
+          </div>
         )
     }
 }   
